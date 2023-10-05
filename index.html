@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="index.css" />
+    <title>Rick and Morty</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#">Inicio</a>
+            <form>
+                <button type="submit"><i class="fa fa-search"></i></button>
+                <select id="filter">
+                    <option value="all">Todos</option>
+                </select>
+            </form>
+        </nav>
+    </header>
+    <main>
+        <div class="cards-container" id="containerCards"> 
+            <!-- Cargar tarjetas -->
+        </div>
+    </main>
+    <footer>
+        <p>Desarrollado por Nombre del desarrollador, año.</p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            const apiUrl = "https://rickandmortyapi.com/api/character/";
+        
+            const cardsContainer = document.getElementById("containerCards");
+            const chaFilter = document.getElementById("filter");
+        
+            fetch(apiUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    // Obtener lista personajes
+                    const characters = data.results; 
+        
+                    characters.slice(0, 15).forEach((character) => {
+                        // Mostrar personajes
+                        const card = document.createElement("div");
+                        card.classList.add("card");
+        
+                        const name = character.name;
+                        const img = character.image;
+                        const species = character.species;
+                        const gender = character.gender;
+                        const status = character.status;
+        
+                        const h2 = document.createElement("h2");
+                        h2.textContent = name;
+        
+                        const imgElement = document.createElement("img");
+                        imgElement.src = img;
+                        imgElement.alt = "Personaje " + name;
+        
+                        const pSpecies = document.createElement("p");
+                        pSpecies.textContent = "Especie: " + species;
+                        
+                        const pGender = document.createElement("p");
+                        pGender.textContent = "Genero: " + gender;
+                        
+                        const pStatus = document.createElement("p");
+                        pStatus.textContent = "Estado: " + status;
+        
+                        card.appendChild(h2);
+                        card.appendChild(imgElement);
+                        card.appendChild(pSpecies);
+                        card.appendChild(pGender);
+                        card.appendChild(pStatus);
+
+                        //Atributo name al elemento card para las option
+                        card.setAttribute("name", name);
+        
+                        cardsContainer.appendChild(card);
+
+                        // Añadir opciones al select
+                        const option = document.createElement("option");
+                        option.value = name;
+                        option.textContent = name;
+                        chaFilter.appendChild(option);
+                    });
+
+                    // Filtrar las tarjetas
+                    chaFilter.addEventListener("change", function() {
+                        const selected = chaFilter.value;
+
+                        // Ocultar todas las tarjetas
+                        const cards = document.querySelectorAll(".card");
+                        cards.forEach((card) => {
+                            card.style.display = "none";
+                        });
+
+                        // Mostrar todas
+                        if (selected === "all") {
+                            cards.forEach((card) => {
+                                card.style.display = "block";
+                            });
+                        } else {
+                            // Mostrar solo la tarjeta del personaje seleccionado
+                            const selectedCard = document.querySelector(`[name="${selected}"]`);
+                            if (selectedCard) {
+                                selectedCard.style.display = "block";
+                            }
+                        }
+                    });
+                })
+                .catch((err) => console.log("Error al obtener los datos", err));
+        });
+    </script>
+</body>
+</html>
